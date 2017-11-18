@@ -1,8 +1,8 @@
 import Rakuten from '../lib/Rakuten';
 
-const RAKUTEN_APP_ID = '1096285933423303197';
+const RAKUTEN_APP_ID = '1035781540823515144';
+// const RAKUTEN_APP_ID = '1096285933423303197';
 
-// eslint-disable-next-line import/prefer-default-export
 export const searchHotelByLocation = (location) => {
   const params = {
     applicationId: RAKUTEN_APP_ID,
