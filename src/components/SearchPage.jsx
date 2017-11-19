@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import _ from 'lodash';
 import queryString from 'query-string';
 
-import SearchForm from '../components/SearchForm';
+import SearchForm from '../containers/SearchForm';
 // import GeocodeResult from './GeocodeResult';
 // import Map from './Map';
 // import HotelsTable from './HotelsTable';
@@ -14,16 +13,6 @@ import { searchHotelByLocation } from '../domain/HotelRepository';
 
 // hotelの配列とソートキーをもらう
 const sortedHotels = (hotels, sortKey) => _.sortBy(hotels, h => h[sortKey]);
-
-// placeが利用可能になる
-const mapStateToProps = state => ({
-  place: state.place,
-});
-
-// onPlaceChangeが利用可能になる
-const mapDispatchToProps = dispatch => ({
-  onPlaceChange: place => dispatch({ type: 'CHANGE_PLACE', place }),
-});
 
 class SearchPage extends Component {
   constructor(props) {
@@ -62,11 +51,6 @@ class SearchPage extends Component {
         lng: 0,
       },
     });
-  }
-
-  handlePlaceChange(e) {
-    e.preventDefault(); // preventDefaultなのでdomが直接書き変わるのではなく、propsが変わらないと中身が変わらない状態になる
-    this.props.onPlaceChange(e.target.value);
   }
 
   handlePlaceSubmit(e) {
@@ -113,8 +97,6 @@ class SearchPage extends Component {
       <div className="search-page">
         <h1 className="app-title">ホテル検索</h1>
         <SearchForm
-          place={this.props.place}
-          onPlaceChange={e => this.handlePlaceChange(e)}
           onSubmit={e => this.handlePlaceSubmit(e)}
         />
       {/*
@@ -142,11 +124,6 @@ class SearchPage extends Component {
 SearchPage.propTypes = {
   history: PropTypes.shape({ push: PropTypes.func }).isRequired, // pushという関数を持っているオブジェクト
   location: PropTypes.shape({ search: PropTypes.string }).isRequired,
-  place: PropTypes.string.isRequired,
-  onPlaceChange: PropTypes.func.isRequired,
 };
 
-const ConnectedSearchPage =
-  connect(mapStateToProps, mapDispatchToProps)(SearchPage);
-
-export default ConnectedSearchPage;
+export default SearchPage;
