@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import queryString from 'query-string';
 
-import SearchForm from './SearchForm';
+import SearchForm from '../components/SearchForm';
 // import GeocodeResult from './GeocodeResult';
 // import Map from './Map';
 // import HotelsTable from './HotelsTable';
@@ -28,10 +28,17 @@ class SearchPage extends Component {
   }
 
   componentDidMount() {
-    const place = this.getPlaceParam();
-    if (place) {
-      this.startSearch(place);
-    }
+    this.unsubscribe = this.props.store.subscribe(() => {
+      this.forceUpdate();
+    });
+    // const place = this.getPlaceParam();
+    // if (place) {
+    //   this.startSearch(place);
+    // }
+  }
+
+  componentWillUnmount() {
+    this.unsubscribe();
   }
 
   getPlaceParam() {
@@ -55,7 +62,7 @@ class SearchPage extends Component {
 
   handlePlaceChange(e) {
     e.preventDefault(); // preventDefaultなのでdomが直接書き変わるのではなく、propsが変わらないと中身が変わらない状態になる
-    this.props.onPlaceChange(e.target.value);
+    this.props.store.dispatch({ type: 'CHANGE_PLACE', place: e.target.value });
   }
 
   handlePlaceSubmit(e) {
@@ -98,11 +105,12 @@ class SearchPage extends Component {
   }
 
   render() {
+    const state = this.props.store.getState();
     return (
       <div className="search-page">
         <h1 className="app-title">ホテル検索</h1>
         <SearchForm
-          place={this.props.place}
+          place={state.place}
           onPlaceChange={e => this.handlePlaceChange(e)}
           onSubmit={e => this.handlePlaceSubmit(e)}
         />
@@ -131,8 +139,11 @@ class SearchPage extends Component {
 SearchPage.propTypes = {
   history: PropTypes.shape({ push: PropTypes.func }).isRequired, // pushという関数を持っているオブジェクト
   location: PropTypes.shape({ search: PropTypes.string }).isRequired,
-  onPlaceChange: PropTypes.func.isRequired,
-  place: PropTypes.string.isRequired,
+  store: PropTypes.shape({
+    subscribe: PropTypes.func,
+    getState: PropTypes.func,
+    dispatch: PropTypes.func,
+  }).isRequired,
 };
 
 export default SearchPage;
